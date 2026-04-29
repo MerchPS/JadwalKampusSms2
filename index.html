@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Jadwal Kuliah — Genap 2025</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a27;
+    --border: rgba(255,255,255,0.07);
+    --accent: #6c63ff;
+    --accent2: #ff6584;
+    --accent3: #43e97b;
+    --accent4: #f9ca24;
+    --text: #e8e8f0;
+    --muted: #6b6b85;
+    --card-glow: 0 0 40px rgba(108,99,255,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3,.label { font-family: 'Syne', sans-serif; }
+
+  /* BG noise */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.4;
+  }
+
+  /* Gradient orbs */
+  .orb {
+    position: fixed; border-radius: 50%;
+    filter: blur(80px); pointer-events: none; z-index: 0;
+  }
+  .orb1 { width: 400px; height: 400px; background: rgba(108,99,255,0.15); top: -100px; right: -100px; }
+  .orb2 { width: 300px; height: 300px; background: rgba(255,101,132,0.10); bottom: 100px; left: -80px; }
+  .orb3 { width: 250px; height: 250px; background: rgba(67,233,123,0.08); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  @keyframes pulse-ring {
+    0%   { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+  @keyframes ticker {
+    from { background-position: 0 0; }
+    to   { background-position: -200px 0; }
+  }
+  @keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-16px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes notifPop {
+    0%   { opacity:0; transform: translateX(120%); }
+    15%  { opacity:1; transform: translateX(0); }
+    85%  { opacity:1; transform: translateX(0); }
+    100% { opacity:0; transform: translateX(120%); }
+  }
+  @keyframes progressBar {
+    from { width: 0%; } to { width: 100%; }
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes breathe {
+    0%,100% { opacity:0.6; transform: scale(1); }
+    50%      { opacity:1; transform: scale(1.15); }
+  }
+
+  .fade-up { animation: fadeUp 0.6s cubic-bezier(.22,1,.36,1) both; }
+  .fade-in { animation: fadeIn 0.5s ease both; }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    transition: all 0.35s cubic-bezier(.22,1,.36,1);
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .card:hover {
+    border-color: rgba(108,99,255,0.35);
+    box-shadow: 0 8px 40px rgba(108,99,255,0.15), 0 2px 8px rgba(0,0,0,0.3);
+    transform: translateY(-3px);
+  }
+  .card.active-now {
+    border-color: rgba(67,233,123,0.5) !important;
+    box-shadow: 0 0 0 1px rgba(67,233,123,0.2), 0 8px 40px rgba(67,233,123,0.12) !important;
+  }
+  .card.next-class {
+    border-color: rgba(108,99,255,0.5) !important;
+    box-shadow: 0 0 0 1px rgba(108,99,255,0.2), 0 8px 40px rgba(108,99,255,0.12) !important;
+  }
+
+  /* Status dot */
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; position: relative; }
+  .status-dot.live { background: var(--accent3); }
+  .status-dot.live::after {
+    content: ''; position: absolute; inset: -3px;
+    border-radius: 50%; border: 2px solid var(--accent3);
+    animation: pulse-ring 1.5s ease-out infinite;
+  }
+  .status-dot.upcoming { background: var(--accent); }
+  .status-dot.done { background: var(--muted); }
+
+  /* Day pill */
+  .day-pill {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.65rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 99px;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .pill-senin    { background: rgba(108,99,255,0.18); color: #a29bfe; border: 1px solid rgba(108,99,255,0.3); }
+  .pill-selasa   { background: rgba(255,101,132,0.15); color: #fd79a8; border: 1px solid rgba(255,101,132,0.3); }
+  .pill-rabu     { background: rgba(249,202,36,0.15); color: #f9ca24; border: 1px solid rgba(249,202,36,0.3); }
+  .pill-kamis    { background: rgba(253,203,110,0.15); color: #fdcb6e; border: 1px solid rgba(253,203,110,0.3); }
+  .pill-jumat    { background: rgba(67,233,123,0.15); color: #43e97b; border: 1px solid rgba(67,233,123,0.3); }
+
+  /* Floor badge */
+  .floor-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem; font-weight: 700;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 2px 8px;
+    color: var(--muted);
+  }
+
+  /* Countdown chip */
+  .countdown-chip {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: 99px;
+    background: rgba(108,99,255,0.15);
+    border: 1px solid rgba(108,99,255,0.3);
+    color: #a29bfe;
+    white-space: nowrap;
+  }
+  .countdown-chip.live-chip {
+    background: rgba(67,233,123,0.15);
+    border-color: rgba(67,233,123,0.35);
+    color: #43e97b;
+  }
+  .countdown-chip.done-chip {
+    background: rgba(107,107,133,0.1);
+    border-color: rgba(107,107,133,0.2);
+    color: var(--muted);
+  }
+
+  /* Progress bar */
+  .progress-track {
+    height: 3px; background: rgba(255,255,255,0.06);
+    border-radius: 99px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 99px;
+    background: linear-gradient(90deg, #6c63ff, #43e97b);
+    transition: width 1s linear;
+  }
+
+  /* Notification toast */
+  #notif-container {
+    position: fixed; top: 20px; right: 16px;
+    z-index: 9999; display: flex; flex-direction: column; gap: 10px;
+    max-width: calc(100vw - 32px);
+  }
+  .notif-toast {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 18px;
+    min-width: 280px; max-width: 360px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+    animation: notifPop 5s cubic-bezier(.22,1,.36,1) forwards;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .notif-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 1px; }
+  .notif-title { font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700; color: var(--text); }
+  .notif-body  { font-size: 0.75rem; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+  .notif-bar   {
+    height: 2px; background: var(--accent);
+    border-radius: 99px; margin-top: 10px;
+    animation: progressBar 4.5s linear forwards;
+  }
+
+  /* Header live clock */
+  #live-clock { font-family: 'Syne', sans-serif; }
+
+  /* Tabs */
+  .tab-btn {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 7px 16px; border-radius: 99px;
+    border: 1px solid transparent;
+    cursor: pointer; transition: all 0.2s;
+    color: var(--muted); background: transparent;
+  }
+  .tab-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: transparent;
+  }
+  .tab-btn:not(.active):hover {
+    border-color: var(--border);
+    color: var(--text);
+  }
+
+  /* Today highlight strip */
+  .today-strip {
+    height: 2px; width: 100%;
+    background: linear-gradient(90deg, transparent, var(--accent3), transparent);
+    border-radius: 99px;
+    animation: breathe 3s ease-in-out infinite;
+  }
+
+  /* Skeleton */
+  .skeleton {
+    background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+    background-size: 400px 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+  }
+
+  /* Floating today badge */
+  .today-badge {
+    position: absolute; top: -1px; right: 16px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.58rem; font-weight: 800;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    background: var(--accent3); color: #000;
+    padding: 2px 8px; border-radius: 0 0 8px 8px;
+  }
+
+  /* Scroll indicator */
+  #scroll-prog {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: linear-gradient(90deg, #6c63ff, #ff6584);
+    z-index: 9999; width: 0; transition: width 0.1s;
+  }
+
+  /* Day header */
+  .day-section-header {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.65rem; font-weight: 800;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .day-section-header::after {
+    content: ''; flex: 1; height: 1px;
+    background: var(--border);
+  }
+
+  /* Mobile safe area */
+  .safe-bottom { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+
+  /* Smooth scroll section reveal */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(.22,1,.36,1); }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* SKS badge */
+  .sks-badge {
+    font-family: 'Syne', sans-serif; font-size: 0.6rem; font-weight: 700;
+    background: rgba(108,99,255,0.12); color: #a29bfe;
+    border: 1px solid rgba(108,99,255,0.2);
+    border-radius: 6px; padding: 1px 6px;
+  }
+
+  /* Room chip */
+  .room-chip {
+    font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 600;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 3px 9px;
+    display: inline-flex; align-items: center; gap: 5px;
+    color: var(--text);
+  }
+
+  /* Summary stats */
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  /* Search */
+  #search-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px 10px 40px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #search-box:focus { border-color: rgba(108,99,255,0.5); }
+  #search-box::placeholder { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- Scroll progress -->
+<div id="scroll-prog"></div>
+
+<!-- BG orbs -->
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- Notification container -->
+<div id="notif-container"></div>
+
+<div class="relative z-10 max-w-md mx-auto px-4 pt-8 pb-8 safe-bottom">
+
+  <!-- Header -->
+  <div class="fade-up" style="animation-delay:0s">
+    <div class="flex items-start justify-between mb-1">
+      <div>
+        <p class="text-xs font-medium tracking-widest uppercase" style="color:var(--muted);font-family:'Syne',sans-serif">Universitas Tarumanagara</p>
+        <h1 class="text-2xl font-extrabold mt-0.5" style="font-family:'Syne',sans-serif;letter-spacing:-0.02em">Jadwal Kuliah</h1>
+        <p class="text-xs mt-0.5" style="color:var(--muted)">Semester Genap 2025 · Kelas B</p>
+      </div>
+      <div class="text-right" id="live-clock-wrap">
+        <div id="live-clock" class="text-xl font-bold" style="color:var(--accent)">--:--</div>
+        <div id="live-date" class="text-xs mt-0.5" style="color:var(--muted)">---</div>
+      </div>
+    </div>
+    <div class="today-strip mt-3"></div>
+  </div>
+
+  <!-- Stats row -->
+  <div class="grid grid-cols-3 gap-3 mt-5 fade-up" style="animation-delay:0.1s">
+    <div class="stat-card">
+      <div class="stat-num">7</div>
+      <div class="text-xs mt-0.5" style="color:var(--muted);font-family:'Syne',sans-serif;font-weight:600">Mata Kuliah</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">24</div>
+      <div class="text-xs mt-0.5" style="color:var(--muted);font-family:'Syne',sans-serif;font-weight:600">Total SKS</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="today-count">0</div>
+      <div class="text-xs mt-0.5" style="color:var(--muted);font-family:'Syne',sans-serif;font-weight:600">Hari Ini</div>
+    </div>
+  </div>
+
+  <!-- Filter tabs + Search -->
+  <div class="mt-5 fade-up" style="animation-delay:0.15s">
+    <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-hide" id="tab-row">
+      <button class="tab-btn active" data-day="all">Semua</button>
+      <button class="tab-btn" data-day="senin">Senin</button>
+      <button class="tab-btn" data-day="selasa">Selasa</button>
+      <button class="tab-btn" data-day="rabu">Rabu</button>
+      <button class="tab-btn" data-day="kamis">Kamis</button>
+      <button class="tab-btn" data-day="jumat">Jumat</button>
+    </div>
+    <div class="relative mt-3">
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style="color:var(--muted)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="search-box" type="text" placeholder="Cari mata kuliah, dosen..."/>
+    </div>
+  </div>
+
+  <!-- Cards container -->
+  <div id="cards-container" class="mt-5 space-y-3"></div>
+
+  <!-- Empty state -->
+  <div id="empty-state" class="hidden text-center py-16 fade-in">
+    <div class="text-4xl mb-3">🔍</div>
+    <p style="font-family:'Syne',sans-serif;font-weight:700;color:var(--muted)">Tidak ditemukan</p>
+    <p class="text-xs mt-1" style="color:var(--muted)">Coba kata kunci lain</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="mt-10 text-center fade-up" style="animation-delay:0.4s">
+    <p class="text-xs" style="color:var(--muted)">FTI Untar · Genap 2025</p>
+    <p class="text-xs mt-1" style="color:var(--muted);opacity:0.5">Auto-update setiap menit</p>
+  </div>
+</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+const SCHEDULE = [
+  {
+    id: 1,
+    kode: 'TK13030',
+    nama: 'Numerical Method',
+    sks: 4,
+    kelas: 'B',
+    dosen: 'Dyah Erny Herwindiati, Prof., Ir., M.Si, Dr.',
+    email: 'dyahh@fti.untar.ac.id',
+    hari: 'selasa',
+    mulai: '15:30',
+    selesai: '17:10',
+    ruang: 'R0901',
+    lantai: 9,
+    gedung: 'Gedung Utama',
+    teams: 'tsdg6uj',
+    emoji: '📐'
+  },
+  {
+    id: 2,
+    kode: 'TK13030',
+    nama: 'Numerical Method',
+    sks: 4,
+    kelas: 'B',
+    dosen: 'Janson Hendryli, S. Kom. M.Kom.',
+    email: 'jansonh@fti.untar.ac.id',
+    hari: 'selasa',
+    mulai: '13:30',
+    selesai: '15:10',
+    ruang: 'R0901',
+    lantai: 9,
+    gedung: 'Gedung Utama',
+    teams: 'tsdg6uj',
+    emoji: '📐'
+  },
+  {
+    id: 3,
+    kode: 'TK13034',
+    nama: 'Operating Systems',
+    sks: 2,
+    kelas: 'B',
+    dosen: 'Rifky Kurniawan, S.Kom',
+    email: 'rifkyk@fti.untar.ac.id',
+    hari: 'kamis',
+    mulai: '09:30',
+    selesai: '11:10',
+    ruang: 'R0902',
+    lantai: 9,
+    gedung: 'Gedung Utama',
+    teams: 'cyvsxoy',
+    emoji: '💻'
+  },
+  {
+    id: 4,
+    kode: 'TK13038',
+    nama: 'Algebra & Discrete Mathematics',
+    sks: 4,
+    kelas: 'B',
+    dosen: 'Lely Hiryanto, ST., M.Sc., Ph.D.',
+    email: 'lelyh@fti.untar.ac.id',
+    hari: 'selasa',
+    mulai: '07:30',
+    selesai: '09:10',
+    ruang: 'R0701',
+    lantai: 7,
+    gedung: 'Gedung Utama',
+    teams: '37f57gw',
+    emoji: '∑'
+  },
+  {
+    id: '4b',
+    kode: 'TK13038',
+    nama: 'Algebra & Discrete Mathematics',
+    sks: 4,
+    kelas: 'B',
+    dosen: 'Lely Hiryanto, ST., M.Sc., Ph.D.',
+    email: 'lelyh@fti.untar.ac.id',
+    hari: 'rabu',
+    mulai: '15:30',
+    selesai: '17:10',
+    ruang: 'R0804',
+    lantai: 8,
+    gedung: 'Gedung Utama',
+    teams: '37f57gw',
+    emoji: '∑'
+  },
+  {
+    id: 5,
+    kode: 'TK13039',
+    nama: 'Intro to Artificial Intelligence',
+    sks: 2,
+    kelas: 'B',
+    dosen: 'Meirista Wulandari, S.T., M.Eng. Dr.',
+    email: 'meiristaw@ft.untar.ac.id',
+    hari: 'jumat',
+    mulai: '13:30',
+    selesai: '15:10',
+    ruang: 'R0701',
+    lantai: 7,
+    gedung: 'Gedung Utama',
+    teams: null,
+    emoji: '🤖'
+  },
+  {
+    id: 6,
+    kode: 'TK23007',
+    nama: 'Data Structures',
+    sks: 4,
+    kelas: 'B',
+    dosen: 'Jeanny Pragantha, Ir., M.Eng',
+    email: 'jeannyp@fti.untar.ac.id',
+    hari: 'senin',
+    mulai: '07:30',
+    selesai: '09:10',
+    ruang: 'R0901',
+    lantai: 9,
+    gedung: 'Gedung Utama',
+    teams: 'wd61tgy',
+    emoji: '🌳'
+  },
+  {
+    id: '6b',
+    kode: 'TK23007',
+    nama: 'Data Structures',
+    sks: 4,
+    kelas: 'B',
+    dosen: 'Jeanny Pragantha, Ir., M.Eng',
+    email: 'jeannyp@fti.untar.ac.id',
+    hari: 'senin',
+    mulai: '09:30',
+    selesai: '11:10',
+    ruang: 'R0901',
+    lantai: 9,
+    gedung: 'Gedung Utama',
+    teams: 'wd61tgy',
+    emoji: '🌳'
+  },
+  {
+    id: 7,
+    kode: 'TK23022',
+    nama: 'Back-End Programming',
+    sks: 4,
+    kelas: 'B',
+    dosen: 'Janson Hendryli, S. Kom. M.Kom.',
+    email: 'jansonh@fti.untar.ac.id',
+    hari: 'senin',
+    mulai: '15:30',
+    selesai: '17:10',
+    ruang: 'R0901',
+    lantai: 9,
+    gedung: 'Gedung Utama',
+    teams: 'wkr6t8j',
+    emoji: '⚙️'
+  },
+  {
+    id: '7b',
+    kode: 'TK23022',
+    nama: 'Back-End Programming',
+    sks: 4,
+    kelas: 'B',
+    dosen: 'Janson Hendryli, S. Kom. M.Kom.',
+    email: 'jansonh@fti.untar.ac.id',
+    hari: 'rabu',
+    mulai: '11:30',
+    selesai: '13:10',
+    ruang: 'R0902',
+    lantai: 9,
+    gedung: 'Gedung Utama',
+    teams: 'wkr6t8j',
+    emoji: '⚙️'
+  }
+];
+
+const DAY_NAMES = ['minggu','senin','selasa','rabu','kamis','jumat','sabtu'];
+const DAY_LABELS = {
+  senin:'Senin', selasa:'Selasa', rabu:'Rabu', kamis:'Kamis', jumat:'Jumat',
+  sabtu:'Sabtu', minggu:'Minggu'
+};
+const DAY_ORDER = ['senin','selasa','rabu','kamis','jumat','sabtu','minggu'];
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function timeToMinutes(t) {
+  const [h,m] = t.split(':').map(Number);
+  return h*60+m;
+}
+
+function minutesToHHMM(mins) {
+  if(mins < 0) return '00:00';
+  const h = Math.floor(mins/60) % 24;
+  const m = mins % 60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
+
+function nowMinutes() {
+  const n = new Date();
+  return n.getHours()*60 + n.getMinutes();
+}
+
+function todayDay() {
+  return DAY_NAMES[new Date().getDay()];
+}
+
+function formatCountdown(diffMins) {
+  if(diffMins <= 0) return '0m';
+  const h = Math.floor(diffMins / 60);
+  const m = diffMins % 60;
+  return h > 0 ? `${h}j ${m}m` : `${m}m`;
+}
+
+function getFloorLabel(lantai) {
+  return `Lantai ${lantai}`;
+}
+
+function getRoomLabel(ruang) {
+  return ruang; // e.g. R0901
+}
+
+function getStatusInfo(item) {
+  const now = nowMinutes();
+  const start = timeToMinutes(item.mulai);
+  const end = timeToMinutes(item.selesai);
+  const today = todayDay();
+
+  if(item.hari !== today) {
+    return { status:'other', label:'', chip:'' };
+  }
+  if(now >= start && now < end) {
+    const progress = ((now - start) / (end - start)) * 100;
+    const remaining = end - now;
+    return { status:'live', label:'Sedang Berlangsung', chip:`⏱ Selesai ${formatCountdown(remaining)}`, progress, remaining };
+  }
+  if(now < start) {
+    const diff = start - now;
+    return { status:'upcoming', label:'Hari ini', chip:`🔔 Mulai ${formatCountdown(diff)}`, diff };
+  }
+  return { status:'done', label:'Selesai hari ini', chip:'✓ Selesai', progress:100 };
+}
+
+function getNextClass() {
+  const now = nowMinutes();
+  const today = todayDay();
+  // same-day upcoming
+  const sameDay = SCHEDULE.filter(s => s.hari === today && timeToMinutes(s.mulai) > now);
+  if(sameDay.length > 0) {
+    sameDay.sort((a,b) => timeToMinutes(a.mulai) - timeToMinutes(b.mulai));
+    return sameDay[0].id;
+  }
+  return null;
+}
+
+// ─── CLOCK ────────────────────────────────────────────────────────────────────
+const MONTHS = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const FULL_DAYS = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+
+function updateClock() {
+  const n = new Date();
+  const h = String(n.getHours()).padStart(2,'0');
+  const m = String(n.getMinutes()).padStart(2,'0');
+  const s = String(n.getSeconds()).padStart(2,'0');
+  document.getElementById('live-clock').textContent = `${h}:${m}:${s}`;
+  document.getElementById('live-date').textContent =
+    `${FULL_DAYS[n.getDay()]}, ${n.getDate()} ${MONTHS[n.getMonth()]} ${n.getFullYear()}`;
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+let activeFilter = 'all';
+let searchQuery = '';
+let notifiedIds = new Set();
+
+function buildCard(item, idx) {
+  const si = getStatusInfo(item);
+  const nextId = getNextClass();
+  const isToday = item.hari === todayDay();
+
+  let cardExtra = '';
+  if(si.status === 'live') cardExtra = 'active-now';
+  else if(item.id === nextId) cardExtra = 'next-class';
+
+  const dayPill = `<span class="day-pill pill-${item.hari}">${DAY_LABELS[item.hari]}</span>`;
+
+  let chipHtml = '';
+  if(si.status === 'live') {
+    chipHtml = `<span class="countdown-chip live-chip"><span class="status-dot live" style="display:inline-block;flex-shrink:0"></span>${si.chip}</span>`;
+  } else if(si.status === 'upcoming') {
+    chipHtml = `<span class="countdown-chip"><span class="status-dot upcoming" style="display:inline-block;flex-shrink:0"></span>${si.chip}</span>`;
+  } else if(si.status === 'done') {
+    chipHtml = `<span class="countdown-chip done-chip"><span class="status-dot done" style="display:inline-block;flex-shrink:0"></span>${si.chip}</span>`;
+  }
+
+  let todayBadge = '';
+  if(isToday && (si.status === 'live' || si.status === 'upcoming')) {
+    todayBadge = `<span class="today-badge">${si.status === 'live' ? 'LIVE' : 'HARI INI'}</span>`;
+  }
+
+  let progressHtml = '';
+  if(si.status === 'live' && si.progress !== undefined) {
+    progressHtml = `
+    <div class="progress-track mt-3">
+      <div class="progress-fill" id="prog-${item.id}" style="width:${si.progress.toFixed(1)}%"></div>
+    </div>
+    <div class="flex justify-between mt-1">
+      <span class="text-xs" style="color:var(--muted)">${item.mulai}</span>
+      <span class="text-xs font-medium" style="color:#43e97b">Sisa ${formatCountdown(si.remaining)}</span>
+      <span class="text-xs" style="color:var(--muted)">${item.selesai}</span>
+    </div>`;
+  }
+
+  const teamsHtml = item.teams
+    ? `<a href="https://teams.microsoft.com/l/channel/${item.teams}" target="_blank"
+         class="inline-flex items-center gap-1.5 text-xs rounded-lg px-3 py-1.5 font-medium transition-all hover:opacity-80"
+         style="background:rgba(108,99,255,0.15);color:#a29bfe;border:1px solid rgba(108,99,255,0.25);text-decoration:none;font-family:'Syne',sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:0.05em">
+         <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12.012 2.25c.734.008 1.465.093 2.182.253a.75.75 0 0 1 .582.649l.17 1.527a1.384 1.384 0 0 0 1.927 1.116l1.401-.615a.75.75 0 0 1 .85.174 9.792 9.792 0 0 1 2.204 3.792.75.75 0 0 1-.271.825l-1.242.916a1.384 1.384 0 0 0 0 2.226l1.242.916a.75.75 0 0 1 .271.826 9.792 9.792 0 0 1-2.204 3.792.75.75 0 0 1-.85.173l-1.401-.615a1.384 1.384 0 0 0-1.927 1.116l-.17 1.527a.75.75 0 0 1-.582.649 9.77 9.77 0 0 1-4.364 0 .75.75 0 0 1-.582-.649l-.17-1.527a1.384 1.384 0 0 0-1.926-1.116l-1.402.615a.75.75 0 0 1-.85-.173 9.792 9.792 0 0 1-2.204-3.792.75.75 0 0 1 .271-.826l1.242-.916a1.384 1.384 0 0 0 0-2.226l-1.242-.916a.75.75 0 0 1-.271-.825 9.792 9.792 0 0 1 2.204-3.792.75.75 0 0 1 .85-.174l1.402.615a1.384 1.384 0 0 0 1.926-1.116l.17-1.527a.75.75 0 0 1 .582-.649 9.77 9.77 0 0 1 2.182-.253z"/></svg>
+         JOIN TEAMS
+       </a>`
+    : `<span class="text-xs" style="color:var(--muted);font-style:italic">No Teams link</span>`;
+
+  return `
+  <div class="card ${cardExtra} reveal" style="animation-delay:${idx * 0.07}s;padding:18px 16px 16px;position:relative" data-id="${item.id}" data-hari="${item.hari}">
+    ${todayBadge}
+    <div class="flex items-start justify-between gap-2">
+      <div class="flex items-center gap-2 flex-wrap">
+        ${dayPill}
+        <span class="sks-badge">${item.sks} SKS</span>
+        <span class="text-xs font-mono" style="color:var(--muted)">${item.kode}</span>
+      </div>
+      ${chipHtml}
+    </div>
+
+    <div class="mt-3 flex items-start gap-3">
+      <div class="text-2xl flex-shrink-0 mt-0.5">${item.emoji}</div>
+      <div class="min-w-0">
+        <h3 class="font-bold text-sm leading-tight" style="font-family:'Syne',sans-serif">${item.nama}</h3>
+        <p class="text-xs mt-0.5 leading-relaxed" style="color:var(--muted)">${item.dosen}</p>
+        <a href="mailto:${item.email}" class="text-xs mt-0.5 block hover:underline" style="color:rgba(108,99,255,0.8)">${item.email}</a>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mt-3 items-center">
+      <span class="room-chip">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        ${item.ruang}
+      </span>
+      <span class="floor-badge">🏢 ${getFloorLabel(item.lantai)}</span>
+      <span class="room-chip" style="background:rgba(249,202,36,0.08);border-color:rgba(249,202,36,0.2);color:#f9ca24">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+        ${item.mulai} – ${item.selesai}
+      </span>
+    </div>
+
+    ${progressHtml}
+
+    <div class="flex items-center justify-between mt-4 pt-3" style="border-top:1px solid var(--border)">
+      ${teamsHtml}
+      <span class="text-xs px-2 py-1 rounded-lg" style="background:rgba(255,255,255,0.04);color:var(--muted);font-family:'Syne',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.1em">Kls ${item.kelas}</span>
+    </div>
+  </div>`;
+}
+
+function getSortedFiltered() {
+  let data = [...SCHEDULE];
+  if(activeFilter !== 'all') {
+    data = data.filter(s => s.hari === activeFilter);
+  }
+  if(searchQuery) {
+    const q = searchQuery.toLowerCase();
+    data = data.filter(s =>
+      s.nama.toLowerCase().includes(q) ||
+      s.dosen.toLowerCase().includes(q) ||
+      s.kode.toLowerCase().includes(q) ||
+      s.ruang.toLowerCase().includes(q)
+    );
+  }
+  // Sort: today first, then by day order, then by time
+  const today = todayDay();
+  data.sort((a,b) => {
+    const aToday = a.hari === today ? 0 : 1;
+    const bToday = b.hari === today ? 0 : 1;
+    if(aToday !== bToday) return aToday - bToday;
+    const aOrd = DAY_ORDER.indexOf(a.hari);
+    const bOrd = DAY_ORDER.indexOf(b.hari);
+    if(aOrd !== bOrd) return aOrd - bOrd;
+    return timeToMinutes(a.mulai) - timeToMinutes(b.mulai);
+  });
+  return data;
+}
+
+function groupByDay(items) {
+  const groups = {};
+  items.forEach(item => {
+    if(!groups[item.hari]) groups[item.hari] = [];
+    groups[item.hari].push(item);
+  });
+  return groups;
+}
+
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  const empty = document.getElementById('empty-state');
+  const data = getSortedFiltered();
+  const today = todayDay();
+
+  // Today count stat
+  const todaySessions = SCHEDULE.filter(s => s.hari === today);
+  document.getElementById('today-count').textContent = todaySessions.length;
+
+  if(data.length === 0) {
+    container.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  if(activeFilter === 'all') {
+    const groups = groupByDay(data);
+    const orderedDays = DAY_ORDER.filter(d => groups[d]);
+    let html = '';
+    let globalIdx = 0;
+    orderedDays.forEach(day => {
+      const isToday = day === today;
+      html += `
+      <div class="day-section-header mt-5 mb-3 reveal" style="animation-delay:${globalIdx*0.05}s">
+        ${DAY_LABELS[day]}${isToday ? ' <span style="color:var(--accent3);font-size:0.7rem">● hari ini</span>' : ''}
+      </div>`;
+      groups[day].forEach(item => {
+        html += buildCard(item, globalIdx);
+        globalIdx++;
+      });
+    });
+    container.innerHTML = html;
+  } else {
+    let html = '';
+    data.forEach((item, i) => { html += buildCard(item, i); });
+    container.innerHTML = html;
+  }
+
+  // Trigger reveal animations
+  setTimeout(() => {
+    document.querySelectorAll('.reveal').forEach(el => {
+      const delay = parseFloat(el.style.animationDelay || '0') * 1000;
+      setTimeout(() => el.classList.add('visible'), delay);
+    });
+  }, 50);
+}
+
+// ─── LIVE UPDATE ──────────────────────────────────────────────────────────────
+function updateLiveProgress() {
+  const now = nowMinutes();
+  const today = todayDay();
+  SCHEDULE.forEach(item => {
+    const prog = document.getElementById(`prog-${item.id}`);
+    if(!prog) return;
+    if(item.hari !== today) return;
+    const start = timeToMinutes(item.mulai);
+    const end = timeToMinutes(item.selesai);
+    if(now >= start && now < end) {
+      const p = ((now - start)/(end - start))*100;
+      prog.style.width = p.toFixed(1) + '%';
+    }
+  });
+}
+
+// ─── NOTIFICATIONS ────────────────────────────────────────────────────────────
+function showNotif(icon, title, body, color='var(--accent)') {
+  const container = document.getElementById('notif-container');
+  const el = document.createElement('div');
+  el.className = 'notif-toast';
+  el.innerHTML = `
+    <div class="notif-icon">${icon}</div>
+    <div style="flex:1;min-width:0">
+      <div class="notif-title">${title}</div>
+      <div class="notif-body">${body}</div>
+      <div class="notif-bar" style="background:${color}"></div>
+    </div>`;
+  container.prepend(el);
+  setTimeout(() => el.remove(), 5200);
+}
+
+function checkNotifications() {
+  const now = nowMinutes();
+  const today = todayDay();
+  SCHEDULE.forEach(item => {
+    if(item.hari !== today) return;
+    const start = timeToMinutes(item.mulai);
+    const diff = start - now;
+
+    // 15 min warning
+    const key15 = `notif-15-${item.id}`;
+    if(diff === 15 && !notifiedIds.has(key15)) {
+      notifiedIds.add(key15);
+      showNotif('⏰', `${item.nama}`, `Mulai 15 menit lagi · ${item.ruang} Lt.${item.lantai}`, '#f9ca24');
+    }
+    // 5 min warning
+    const key5 = `notif-5-${item.id}`;
+    if(diff === 5 && !notifiedIds.has(key5)) {
+      notifiedIds.add(key5);
+      showNotif('🔔', `${item.nama}`, `Segera mulai! ${item.ruang} Lantai ${item.lantai} — ${item.mulai}`, '#ff6584');
+    }
+    // Class started
+    const keyStart = `notif-start-${item.id}`;
+    if(diff === 0 && !notifiedIds.has(keyStart)) {
+      notifiedIds.add(keyStart);
+      showNotif('🚀', `Kelas dimulai!`, `${item.nama} · ${item.ruang} Lt.${item.lantai}`, '#43e97b');
+    }
+  });
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+document.getElementById('tab-row').addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if(!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter = btn.dataset.day;
+  renderCards();
+});
+
+document.getElementById('search-box').addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  renderCards();
+});
+
+// ─── SCROLL PROGRESS ──────────────────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  const el = document.getElementById('scroll-prog');
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docH > 0 ? (window.scrollY / docH) * 100 : 0;
+  el.style.width = pct + '%';
+}, { passive: true });
+
+// ─── INTERSECTION OBSERVER ────────────────────────────────────────────────────
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+
+function observeReveal() {
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderCards();
+observeReveal();
+updateClock();
+setInterval(updateClock, 1000);
+setInterval(() => {
+  checkNotifications();
+  updateLiveProgress();
+}, 60000);
+setInterval(renderCards, 60000);
+
+// Welcome notification on load
+setTimeout(() => {
+  const today = todayDay();
+  const todayClasses = SCHEDULE.filter(s => s.hari === today);
+  if(todayClasses.length > 0) {
+    showNotif('📚', 'Jadwal Hari Ini', `${todayClasses.length} sesi kuliah · ${FULL_DAYS[new Date().getDay()]}`, 'var(--accent)');
+  } else {
+    showNotif('✨', 'Tidak ada kuliah!', 'Hari ini bebas — selamat istirahat 🎉', '#43e97b');
+  }
+}, 1200);
+
+// Browser notification permission
+if('Notification' in window && Notification.permission === 'default') {
+  setTimeout(() => {
+    showNotif('🔔', 'Aktifkan Notifikasi', 'Tap untuk dapat pengingat kelas otomatis', '#f9ca24');
+  }, 3000);
+}
+</script>
+</body>
+</html>
