@@ -3,270 +3,665 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<title>Jadwal Kuliah</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<title>Jadwal · FTI Untar</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --bg:      #0c0c0e;
-    --s1:      #141416;
-    --s2:      #1c1c1f;
-    --s3:      #252529;
-    --border:  rgba(255,255,255,0.06);
-    --border2: rgba(255,255,255,0.11);
-    --text:    #f0f0f2;
-    --sub:     #9898a6;
-    --dim:     #50505c;
-    --live:    #cce8b0;
-    --live-bg: rgba(160,220,110,0.09);
-    --live-br: rgba(160,220,110,0.20);
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{
-    background:var(--bg);color:var(--text);
-    font-family:'Geist',sans-serif;
-    min-height:100vh;overflow-x:hidden;
-    -webkit-font-smoothing:antialiased;
-  }
-  body::after{
-    content:'';position:fixed;inset:0;pointer-events:none;z-index:1;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)' opacity='0.022'/%3E%3C/svg%3E");
-    opacity:.6;
-  }
-  .orb{
-    position:fixed;top:-160px;right:-160px;width:500px;height:500px;border-radius:50%;
-    background:radial-gradient(circle,rgba(255,255,255,0.025) 0%,transparent 70%);
-    pointer-events:none;z-index:0;
-  }
+:root {
+  --bg:        #080b12;
+  --s1:        #0e1220;
+  --s2:        #131829;
+  --s3:        #1a2035;
+  --s4:        #222840;
+  --border:    rgba(120,160,255,0.08);
+  --border2:   rgba(120,160,255,0.16);
+  --text:      #e8edf8;
+  --sub:       #7a88aa;
+  --dim:       #3d4a66;
 
-  /* Animations */
-  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-  @keyframes pulseRing{0%{transform:scale(1);opacity:.9}100%{transform:scale(2.5);opacity:0}}
-  @keyframes notifIn{
-    0%{opacity:0;transform:translateX(110%)}
-    12%{opacity:1;transform:translateX(0)}
-    88%{opacity:1;transform:translateX(0)}
-    100%{opacity:0;transform:translateX(110%)}
-  }
-  @keyframes progAnim{from{width:0}to{width:100%}}
-  @keyframes breathe{0%,100%{opacity:.4}50%{opacity:.9}}
+  /* accent palette */
+  --indigo:    #6d83f2;
+  --violet:    #9d6fff;
+  --teal:      #2dd4bf;
+  --amber:     #fbbf24;
+  --rose:      #f87171;
+  --emerald:   #34d399;
+  --sky:       #38bdf8;
 
-  .fu{animation:fadeUp .55s cubic-bezier(.22,1,.36,1) both}
+  --live:      #2dd4bf;
+  --live-bg:   rgba(45,212,191,0.08);
+  --live-br:   rgba(45,212,191,0.22);
 
-  /* Cards */
-  .card{
-    background:var(--s1);border:1px solid var(--border);
-    border-radius:18px;position:relative;overflow:hidden;
-    transition:border-color .2s,transform .2s;
-  }
-  .card::before{
-    content:'';position:absolute;inset:0;pointer-events:none;
-    background:linear-gradient(145deg,rgba(255,255,255,0.022) 0%,transparent 50%);
-  }
-  .card:active{transform:scale(.984)}
-  .card.live{
-    border-color:var(--live-br)!important;
-    background:linear-gradient(155deg,rgba(160,220,110,.055) 0%,var(--s1) 55%)!important;
-  }
-  .card.done{opacity:.48}
+  --krl:       #38bdf8;
+  --krl-bg:    rgba(56,189,248,0.07);
+  --krl-br:    rgba(56,189,248,0.2);
 
-  /* Dot */
-  .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:inline-block;position:relative}
-  .dot.live{background:#a8d878}
-  .dot.live::after{
-    content:'';position:absolute;inset:-3px;border-radius:50%;
-    border:1.5px solid #a8d878;animation:pulseRing 1.7s ease-out infinite;
-  }
-  .dot.up{background:var(--sub)}
-  .dot.done{background:var(--dim)}
+  --ai:        #9d6fff;
+  --ai-bg:     rgba(157,111,255,0.08);
+  --ai-br:     rgba(157,111,255,0.22);
+}
 
-  /* Chip */
-  .chip{
-    font-size:.65rem;font-weight:600;letter-spacing:.025em;
-    display:inline-flex;align-items:center;gap:5px;
-    padding:3px 10px;border-radius:99px;white-space:nowrap;
-  }
-  .chip.live{background:var(--live-bg);border:1px solid var(--live-br);color:var(--live)}
-  .chip.up{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.10);color:var(--sub)}
-  .chip.done{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.055);color:var(--dim)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
 
-  /* Day pill */
-  .daypill{
-    font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-    padding:2px 9px;border-radius:99px;
-    background:rgba(255,255,255,0.055);border:1px solid rgba(255,255,255,.09);
-    color:var(--sub);
-  }
+/* ───── Noise + mesh bg ───── */
+body::before {
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 15% 10%, rgba(109,131,242,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 85% 80%, rgba(157,111,255,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 50% 50%, rgba(45,212,191,.03) 0%, transparent 70%);
+}
+body::after {
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:1;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  opacity:.5;
+}
 
-  /* Meta badge */
-  .mb{
-    font-size:.65rem;font-weight:500;
-    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);
-    border-radius:8px;padding:3px 9px;color:var(--sub);
-    display:inline-flex;align-items:center;gap:4px;
-  }
+/* ───── Loading Screen ───── */
+#loader {
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+  transition:opacity .6s ease, visibility .6s ease;
+}
+#loader.hidden{opacity:0;visibility:hidden}
+.loader-ring {
+  width:52px;height:52px;border-radius:50%;
+  border:2px solid rgba(109,131,242,.15);
+  border-top-color:var(--indigo);
+  animation:spin .9s linear infinite;
+  position:relative;
+}
+.loader-ring::before{
+  content:'';position:absolute;inset:5px;border-radius:50%;
+  border:2px solid rgba(157,111,255,.1);
+  border-bottom-color:var(--violet);
+  animation:spin 1.4s linear infinite reverse;
+}
+.loader-ring::after{
+  content:'';position:absolute;inset:11px;border-radius:50%;
+  border:2px solid rgba(45,212,191,.08);
+  border-left-color:var(--teal);
+  animation:spin 2s linear infinite;
+}
+.loader-text{
+  font-family:'DM Serif Display',serif;font-size:1.1rem;
+  background:linear-gradient(135deg,var(--indigo),var(--violet));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:.04em;
+}
+.loader-bar{
+  width:160px;height:1.5px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;
+}
+.loader-bar-fill{
+  height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--indigo),var(--violet),var(--teal));
+  animation:loadBar 1.8s cubic-bezier(.4,0,.2,1) forwards;
+}
 
-  /* Progress */
-  .pt{height:1.5px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden}
-  .pf{height:100%;border-radius:99px;background:rgba(160,220,110,.55);transition:width 1s linear}
+/* ───── Scroll bar ───── */
+#spb{position:fixed;top:0;left:0;height:2px;z-index:9998;width:0;
+  background:linear-gradient(90deg,var(--indigo),var(--violet),var(--teal));}
 
-  /* Tabs */
-  .tabrow{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
-  .tabrow::-webkit-scrollbar{display:none}
-  .tab{
-    font-size:.68rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
-    padding:6px 15px;border-radius:99px;border:1px solid transparent;
-    cursor:pointer;transition:all .15s;color:var(--dim);background:transparent;
-    white-space:nowrap;flex-shrink:0;
-  }
-  .tab.on{background:var(--text);color:var(--bg);border-color:transparent}
-  .tab:not(.on):hover{border-color:var(--border2);color:var(--sub)}
+/* ───── Animations ───── */
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes loadBar{0%{width:0}60%{width:75%}100%{width:100%}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideLeft{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulseRing{0%{transform:scale(1);opacity:.8}100%{transform:scale(2.6);opacity:0}}
+@keyframes breathe{0%,100%{opacity:.35}50%{opacity:.8}}
+@keyframes gradFlow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes notifIn{
+  0%{opacity:0;transform:translateX(110%)}
+  12%{opacity:1;transform:translateX(0)}
+  88%{opacity:1;transform:translateX(0)}
+  100%{opacity:0;transform:translateX(110%)}
+}
+@keyframes progAnim{from{width:0}to{width:100%}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes popIn{0%{transform:scale(.88);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes aiTyping{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
 
-  /* Section label */
-  .seclabel{
-    font-size:.58rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
-    color:var(--dim);display:flex;align-items:center;gap:10px;
-  }
-  .seclabel::after{content:'';flex:1;height:1px;background:var(--border)}
+.fu{animation:fadeUp .6s cubic-bezier(.22,1,.36,1) both}
+.fl{animation:slideLeft .5s cubic-bezier(.22,1,.36,1) both}
+.fr{animation:slideRight .5s cubic-bezier(.22,1,.36,1) both}
 
-  /* Toasts */
-  #notifs{
-    position:fixed;top:max(18px,env(safe-area-inset-top));right:14px;
-    z-index:9999;display:flex;flex-direction:column;gap:8px;
-    max-width:calc(100vw - 28px);
-  }
-  .toast{
-    background:var(--s2);border:1px solid var(--border2);
-    border-radius:14px;padding:12px 15px;
-    min-width:250px;max-width:330px;
-    box-shadow:0 24px 64px rgba(0,0,0,.55);
-    animation:notifIn 5s cubic-bezier(.22,1,.36,1) forwards;
-    display:flex;align-items:flex-start;gap:10px;
-  }
-  .ti{font-size:1.1rem;flex-shrink:0;margin-top:1px}
-  .tt{font-size:.76rem;font-weight:600;color:var(--text)}
-  .tb{font-size:.7rem;color:var(--sub);margin-top:2px;line-height:1.5}
-  .tbar{height:1.5px;background:var(--border2);border-radius:99px;margin-top:8px;animation:progAnim 4.5s linear forwards}
+/* ───── Layout ───── */
+.wrap{position:relative;z-index:10;max-width:480px;margin:0 auto;padding:0 16px 48px;
+  padding-bottom:max(48px,env(safe-area-inset-bottom));}
 
-  /* Scroll bar */
-  #spb{position:fixed;top:0;left:0;height:1px;background:rgba(255,255,255,.2);z-index:9998;width:0}
+/* ───── Cards ───── */
+.card{
+  background:var(--s1);
+  border:1px solid var(--border);
+  border-radius:20px;position:relative;overflow:hidden;
+  transition:border-color .25s,transform .2s,box-shadow .25s;
+  backdrop-filter:blur(8px);
+}
+.card::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(145deg,rgba(255,255,255,0.028) 0%,transparent 55%);
+}
+.card:hover{border-color:var(--border2);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.card:active{transform:scale(.982)}
+.card.live{
+  border-color:var(--live-br)!important;
+  background:linear-gradient(150deg,rgba(45,212,191,.06) 0%,var(--s1) 50%)!important;
+  box-shadow:0 0 40px rgba(45,212,191,.06),0 8px 32px rgba(0,0,0,.25);
+}
+.card.done{opacity:.45}
 
-  /* Search */
-  .sw{position:relative}
-  .sw svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--dim);pointer-events:none}
-  #q{
-    width:100%;background:var(--s1);border:1px solid var(--border);
-    border-radius:12px;padding:10px 14px 10px 37px;
-    color:var(--text);font-family:'Geist',sans-serif;font-size:.84rem;
-    outline:none;transition:border-color .18s;
-  }
-  #q:focus{border-color:rgba(255,255,255,.18)}
-  #q::placeholder{color:var(--dim)}
+/* ───── Dot ───── */
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:inline-block;position:relative}
+.dot.live{background:var(--live)}
+.dot.live::after{
+  content:'';position:absolute;inset:-3px;border-radius:50%;
+  border:1.5px solid var(--live);animation:pulseRing 1.8s ease-out infinite;
+}
+.dot.up{background:var(--indigo)}
+.dot.done{background:var(--dim)}
 
-  /* Stat */
-  .stat{
-    background:var(--s1);border:1px solid var(--border);
-    border-radius:14px;padding:14px 10px;text-align:center;
-  }
-  .stn{font-family:'Instrument Serif',serif;font-size:1.9rem;line-height:1;color:var(--text)}
-  .stl{font-size:.58rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:4px}
+/* ───── Chip ───── */
+.chip{
+  font-size:.62rem;font-weight:600;letter-spacing:.04em;
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:99px;white-space:nowrap;
+}
+.chip.live{background:var(--live-bg);border:1px solid var(--live-br);color:var(--live)}
+.chip.up{
+  background:rgba(109,131,242,.1);border:1px solid rgba(109,131,242,.2);color:var(--indigo);
+}
+.chip.done{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);color:var(--dim)}
 
-  /* Reveal */
-  .rv{opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s cubic-bezier(.22,1,.36,1)}
-  .rv.in{opacity:1;transform:none}
+/* ───── Day pill ───── */
+.daypill{
+  font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  padding:3px 9px;border-radius:99px;
+  background:linear-gradient(135deg,rgba(109,131,242,.15),rgba(157,111,255,.1));
+  border:1px solid rgba(109,131,242,.18);color:var(--indigo);
+}
 
-  /* Teams */
-  .tlink{
-    font-size:.63rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-    display:inline-flex;align-items:center;gap:5px;
-    padding:5px 11px;border-radius:8px;
-    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-    color:var(--sub);text-decoration:none;transition:all .15s;
-  }
-  .tlink:hover{background:rgba(255,255,255,.08);color:var(--text);border-color:rgba(255,255,255,.15)}
+/* ───── Meta badge ───── */
+.mb{
+  font-size:.63rem;font-weight:500;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  border-radius:8px;padding:3px 9px;color:var(--sub);
+  display:inline-flex;align-items:center;gap:5px;
+}
 
-  /* Today hero */
-  .hero{font-family:'Instrument Serif',serif;font-size:2.1rem;line-height:1;letter-spacing:-.01em}
+/* ───── Progress ───── */
+.pt{height:2px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden}
+.pf{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--teal),var(--indigo));transition:width 1s linear}
 
-  /* Separator line */
-  .sep{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);animation:breathe 3s ease-in-out infinite}
+/* ───── Tabs ───── */
+.tabrow{display:flex;gap:4px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}
+.tabrow::-webkit-scrollbar{display:none}
+.tab{
+  font-size:.66rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  padding:6px 14px;border-radius:99px;border:1px solid transparent;
+  cursor:pointer;transition:all .18s;color:var(--dim);background:transparent;
+  white-space:nowrap;flex-shrink:0;font-family:'DM Sans',sans-serif;
+}
+.tab.on{
+  background:linear-gradient(135deg,var(--indigo),var(--violet));
+  color:#fff;box-shadow:0 4px 16px rgba(109,131,242,.3);
+}
+.tab:not(.on):hover{border-color:var(--border2);color:var(--sub)}
 
-  .pb-safe{padding-bottom:max(32px,env(safe-area-inset-bottom))}
+/* ───── Section label ───── */
+.seclabel{
+  font-size:.56rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--dim);display:flex;align-items:center;gap:10px;
+}
+.seclabel::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+
+/* ───── Toasts ───── */
+#notifs{position:fixed;top:max(18px,env(safe-area-inset-top));right:14px;
+  z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:calc(100vw - 28px);}
+.toast{
+  background:var(--s2);border:1px solid var(--border2);
+  border-radius:16px;padding:12px 15px;
+  min-width:240px;max-width:320px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  animation:notifIn 5.2s cubic-bezier(.22,1,.36,1) forwards;
+  display:flex;align-items:flex-start;gap:10px;
+  backdrop-filter:blur(16px);
+}
+.ti{font-size:1.05rem;flex-shrink:0;margin-top:2px}
+.tt{font-size:.74rem;font-weight:600;color:var(--text)}
+.tb{font-size:.68rem;color:var(--sub);margin-top:2px;line-height:1.5}
+.tbar{height:1.5px;background:rgba(255,255,255,.06);border-radius:99px;margin-top:8px;
+  animation:progAnim 4.8s linear forwards;
+  background:linear-gradient(90deg,var(--indigo),var(--violet))}
+
+/* ───── Search ───── */
+.sw{position:relative}
+.sw svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--dim);pointer-events:none}
+#q{
+  width:100%;background:var(--s1);border:1px solid var(--border);
+  border-radius:14px;padding:11px 14px 11px 38px;
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:.84rem;
+  outline:none;transition:border-color .2s,box-shadow .2s;
+}
+#q:focus{border-color:rgba(109,131,242,.35);box-shadow:0 0 0 3px rgba(109,131,242,.08)}
+#q::placeholder{color:var(--dim)}
+
+/* ───── Stats ───── */
+.stat{
+  background:var(--s1);border:1px solid var(--border);
+  border-radius:16px;padding:14px 10px;text-align:center;
+  position:relative;overflow:hidden;transition:transform .2s,border-color .2s;
+}
+.stat:hover{transform:translateY(-2px);border-color:var(--border2)}
+.stat::before{
+  content:'';position:absolute;top:-30px;left:50%;transform:translateX(-50%);
+  width:80px;height:80px;border-radius:50%;
+  background:radial-gradient(circle,rgba(109,131,242,.12),transparent 70%);
+}
+.stn{
+  font-family:'DM Serif Display',serif;font-size:2rem;line-height:1;
+  background:linear-gradient(135deg,var(--text),rgba(232,237,248,.7));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.stl{font-size:.57rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-top:4px}
+
+/* ───── Reveal ───── */
+.rv{opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s cubic-bezier(.22,1,.36,1)}
+.rv.in{opacity:1;transform:none}
+
+/* ───── Teams link ───── */
+.tlink{
+  font-size:.62rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 12px;border-radius:8px;
+  background:rgba(109,131,242,.08);border:1px solid rgba(109,131,242,.18);
+  color:var(--indigo);text-decoration:none;transition:all .15s;
+}
+.tlink:hover{background:rgba(109,131,242,.15);border-color:rgba(109,131,242,.3);color:#fff}
+
+/* ───── Hero ───── */
+.hero{
+  font-family:'DM Serif Display',serif;font-size:2.4rem;line-height:1;letter-spacing:-.01em;
+  background:linear-gradient(135deg,var(--text) 30%,rgba(109,131,242,.7));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+/* ───── Separator ───── */
+.sep{height:1px;background:linear-gradient(90deg,transparent,rgba(109,131,242,.2),var(--border),transparent);
+  animation:breathe 3.5s ease-in-out infinite}
+
+/* ───── Mode Switcher ───── */
+.modesw{
+  display:flex;gap:4px;background:var(--s1);border:1px solid var(--border);
+  border-radius:14px;padding:4px;
+}
+.msbtn{
+  flex:1;padding:8px;border-radius:10px;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:.7rem;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;transition:all .2s;
+  background:transparent;color:var(--dim);
+}
+.msbtn.on{
+  background:linear-gradient(135deg,var(--s3),var(--s4));
+  color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.3);
+  border:1px solid var(--border2);
+}
+
+/* ───── KRL ───── */
+.krl-card{
+  background:var(--s1);border:1px solid var(--krl-br);
+  border-radius:16px;padding:14px;
+  background:linear-gradient(145deg,rgba(56,189,248,.04),var(--s1));
+}
+.krl-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.krl-icon{
+  width:32px;height:32px;border-radius:10px;
+  background:linear-gradient(135deg,rgba(56,189,248,.2),rgba(56,189,248,.08));
+  border:1px solid var(--krl-br);display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;flex-shrink:0;
+}
+.krl-title{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--krl)}
+.krl-sub{font-size:.65rem;color:var(--sub);margin-top:1px}
+.krl-select{
+  background:var(--s2);border:1px solid var(--border2);border-radius:10px;
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:.78rem;
+  padding:8px 12px;outline:none;width:100%;cursor:pointer;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a88aa' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;
+}
+.krl-select:focus{border-color:var(--krl-br)}
+.krl-row{
+  display:flex;align-items:center;gap:10px;padding:10px 0;
+  border-bottom:1px solid var(--border);animation:fadeIn .3s ease;
+}
+.krl-row:last-child{border-bottom:none}
+.krl-time{
+  font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:500;
+  color:var(--krl);min-width:42px;
+}
+.krl-line{
+  font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 8px;border-radius:99px;flex-shrink:0;
+}
+.krl-dest{font-size:.75rem;color:var(--text);font-weight:500;flex:1}
+.krl-stops{font-size:.62rem;color:var(--sub)}
+.krl-empty{text-align:center;padding:24px 0;color:var(--dim);font-size:.78rem}
+.krl-loading{text-align:center;padding:24px 0}
+.krl-loading .loader-ring{width:28px;height:28px;margin:0 auto}
+
+.time-row{display:flex;gap:8px;margin-top:12px}
+.time-input{
+  flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:10px;
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:.78rem;
+  padding:8px 10px;outline:none;
+}
+.time-input:focus{border-color:var(--krl-br)}
+.krl-btn{
+  padding:8px 16px;border-radius:10px;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:600;
+  background:linear-gradient(135deg,var(--sky),var(--indigo));color:#fff;
+  transition:all .15s;white-space:nowrap;
+}
+.krl-btn:hover{opacity:.85;transform:translateY(-1px)}
+.krl-btn:active{transform:scale(.96)}
+
+/* Line color chips */
+.line-1{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171}
+.line-2{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.25);color:var(--amber)}
+.line-5{background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.25);color:var(--emerald)}
+.line-6{background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);color:var(--sky)}
+.line-7{background:rgba(157,111,255,.12);border:1px solid rgba(157,111,255,.25);color:var(--violet)}
+
+/* ───── AI Panel ───── */
+.ai-panel{
+  background:var(--s1);border:1px solid var(--ai-br);border-radius:20px;overflow:hidden;
+  background:linear-gradient(150deg,rgba(157,111,255,.04),var(--s1));
+}
+.ai-header{
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.ai-icon{
+  width:32px;height:32px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--violet),var(--indigo));
+  display:flex;align-items:center;justify-content:center;font-size:.85rem;
+  box-shadow:0 4px 12px rgba(157,111,255,.3);
+}
+.ai-title{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ai)}
+.ai-model{font-size:.6rem;color:var(--dim);margin-top:1px;font-family:'JetBrains Mono',monospace}
+.ai-messages{
+  max-height:300px;overflow-y:auto;padding:16px;
+  display:flex;flex-direction:column;gap:10px;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+}
+.ai-messages::-webkit-scrollbar{width:3px}
+.ai-messages::-webkit-scrollbar-track{background:transparent}
+.ai-messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+.ai-msg{display:flex;gap:8px;max-width:100%;animation:fadeUp .3s ease}
+.ai-msg.user{flex-direction:row-reverse}
+.ai-bubble{
+  max-width:80%;padding:10px 14px;border-radius:14px;font-size:.78rem;line-height:1.55;
+}
+.ai-msg.user .ai-bubble{
+  background:linear-gradient(135deg,var(--indigo),var(--violet));
+  color:#fff;border-bottom-right-radius:4px;
+}
+.ai-msg.bot .ai-bubble{
+  background:var(--s2);border:1px solid var(--border);color:var(--text);
+  border-bottom-left-radius:4px;
+}
+.ai-avatar{
+  width:26px;height:26px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:.7rem;
+  align-self:flex-end;
+}
+.ai-msg.user .ai-avatar{background:linear-gradient(135deg,var(--indigo),var(--violet))}
+.ai-msg.bot .ai-avatar{background:var(--s3);border:1px solid var(--border)}
+.ai-typing{display:flex;gap:4px;padding:10px 14px}
+.ai-typing span{
+  width:6px;height:6px;border-radius:50%;background:var(--dim);
+  animation:aiTyping 1.2s ease infinite;
+}
+.ai-typing span:nth-child(2){animation-delay:.2s}
+.ai-typing span:nth-child(3){animation-delay:.4s}
+.ai-input-row{
+  padding:12px;border-top:1px solid var(--border);
+  display:flex;gap:8px;align-items:flex-end;
+}
+.ai-input{
+  flex:1;background:var(--s2);border:1px solid var(--border);border-radius:12px;
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:.8rem;
+  padding:9px 12px;outline:none;resize:none;min-height:38px;max-height:100px;
+  transition:border-color .2s;line-height:1.4;
+}
+.ai-input:focus{border-color:var(--ai-br)}
+.ai-input::placeholder{color:var(--dim)}
+.ai-send{
+  width:36px;height:36px;border-radius:10px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--violet),var(--indigo));
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;flex-shrink:0;
+}
+.ai-send:hover{opacity:.85;transform:scale(1.05)}
+.ai-send:active{transform:scale(.94)}
+.ai-send svg{color:#fff}
+.ai-quick{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 12px}
+.ai-qbtn{
+  font-size:.62rem;padding:5px 11px;border-radius:99px;border:1px solid var(--ai-br);
+  background:var(--ai-bg);color:var(--ai);cursor:pointer;transition:all .15s;
+  font-family:'DM Sans',sans-serif;
+}
+.ai-qbtn:hover{background:rgba(157,111,255,.15);color:#fff}
+
+/* ───── Empty ───── */
+#empty{
+  text-align:center;padding:64px 0;animation:fadeIn .4s ease;
+}
+.empty-icon{font-size:1.8rem;opacity:.15;font-family:'DM Serif Display',serif}
+.empty-txt{font-size:.78rem;color:var(--dim);margin-top:12px;font-weight:500}
+
+/* ───── Gradient text ───── */
+.grad{
+  background:linear-gradient(135deg,var(--indigo),var(--violet),var(--teal));
+  background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:gradFlow 4s linear infinite;
+}
+
+/* ───── Alert banner ───── */
+.alert-bar{
+  display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;
+  font-size:.7rem;background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);
+  color:var(--amber);margin-bottom:12px;animation:fadeDown .4s ease;
+}
+
+/* responsive tweaks */
+@media(max-width:360px){.hero{font-size:2rem}.stn{font-size:1.7rem}}
 </style>
 </head>
 <body>
+
+<!-- Loading Screen -->
+<div id="loader">
+  <div class="loader-ring"></div>
+  <div class="loader-text">FTI Untar · Jadwal</div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
+
+<!-- Scroll Progress Bar -->
 <div id="spb"></div>
-<div class="orb"></div>
+
+<!-- Toasts -->
 <div id="notifs"></div>
 
-<div class="relative z-10 max-w-md mx-auto px-4 pt-10 pb-safe">
+<div class="wrap pt-10">
 
   <!-- Header -->
-  <div class="fu" style="animation-delay:0s">
-    <div class="flex items-start justify-between">
+  <div class="fu" style="animation-delay:.05s">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between">
       <div>
-        <p style="font-size:.6rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)">FTI Untar · Genap 2025</p>
+        <p style="font-size:.58rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)">FTI Untar · Genap 2025</p>
         <h1 class="hero mt-1" id="hday">—</h1>
-        <p style="font-size:.78rem;color:var(--sub);margin-top:3px" id="hdate">—</p>
+        <p style="font-size:.76rem;color:var(--sub);margin-top:4px" id="hdate">—</p>
       </div>
-      <div class="text-right mt-0.5">
-        <div id="clk" style="font-family:'Instrument Serif',serif;font-size:2rem;line-height:1;letter-spacing:-.02em">--:--</div>
-        <div id="sec" style="font-size:.62rem;color:var(--dim);font-weight:500;margin-top:1px;letter-spacing:.04em">:--</div>
+      <div style="text-align:right;margin-top:2px">
+        <div id="clk" style="font-family:'DM Serif Display',serif;font-size:2.2rem;line-height:1;letter-spacing:-.02em;background:linear-gradient(135deg,var(--text),var(--indigo));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">--:--</div>
+        <div id="sec" style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--dim);font-weight:500;margin-top:2px">:--</div>
       </div>
     </div>
-    <div class="sep mt-4"></div>
+    <div class="sep" style="margin-top:16px"></div>
   </div>
 
   <!-- Stats -->
-  <div class="grid grid-cols-3 gap-2 mt-5 fu" style="animation-delay:.07s">
-    <div class="stat"><div class="stn">7</div><div class="stl">Matkul</div></div>
-    <div class="stat"><div class="stn">24</div><div class="stl">SKS</div></div>
-    <div class="stat"><div class="stn" id="tn">—</div><div class="stl">Hari ini</div></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px" class="fu" style="animation-delay:.1s">
+    <div class="stat rv"><div class="stn">7</div><div class="stl">Matkul</div></div>
+    <div class="stat rv"><div class="stn">24</div><div class="stl">SKS</div></div>
+    <div class="stat rv"><div class="stn" id="tn">—</div><div class="stl">Hari ini</div></div>
   </div>
 
-  <!-- Tabs -->
-  <div class="tabrow mt-5 fu" style="animation-delay:.11s" id="tabs">
-    <button class="tab" data-d="today">Hari Ini</button>
-    <button class="tab" data-d="senin">Senin</button>
-    <button class="tab" data-d="selasa">Selasa</button>
-    <button class="tab" data-d="rabu">Rabu</button>
-    <button class="tab" data-d="kamis">Kamis</button>
-    <button class="tab" data-d="jumat">Jumat</button>
-    <button class="tab" data-d="all">Semua</button>
+  <!-- Mode Switcher -->
+  <div class="modesw fu" style="margin-top:14px;animation-delay:.13s">
+    <button class="msbtn on" data-mode="kuliah" onclick="switchMode(this)">📚 Kuliah</button>
+    <button class="msbtn" data-mode="krl" onclick="switchMode(this)">🚆 KRL</button>
+    <button class="msbtn" data-mode="ai" onclick="switchMode(this)">✦ AI Chat</button>
   </div>
 
-  <!-- Search -->
-  <div class="sw mt-3 fu" style="animation-delay:.14s">
-    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input id="q" type="text" placeholder="Cari mata kuliah, dosen, ruang…"/>
+  <!-- ═══ PANEL KULIAH ═══ -->
+  <div id="panel-kuliah" class="fu" style="animation-delay:.15s">
+
+    <!-- Tabs -->
+    <div class="tabrow" style="margin-top:14px" id="tabs">
+      <button class="tab" data-d="today">Hari Ini</button>
+      <button class="tab" data-d="senin">Senin</button>
+      <button class="tab" data-d="selasa">Selasa</button>
+      <button class="tab" data-d="rabu">Rabu</button>
+      <button class="tab" data-d="kamis">Kamis</button>
+      <button class="tab" data-d="jumat">Jumat</button>
+      <button class="tab" data-d="all">Semua</button>
+    </div>
+
+    <!-- Search -->
+    <div class="sw" style="margin-top:10px">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="q" type="text" placeholder="Cari mata kuliah, dosen, ruang…"/>
+    </div>
+
+    <!-- Cards -->
+    <div id="cards" style="margin-top:14px;display:flex;flex-direction:column;gap:10px"></div>
+
+    <!-- Empty -->
+    <div id="empty" class="hidden">
+      <div class="empty-icon">◻</div>
+      <p class="empty-txt">Tidak ada jadwal</p>
+    </div>
   </div>
 
-  <!-- Cards -->
-  <div id="cards" class="mt-5 space-y-3"></div>
+  <!-- ═══ PANEL KRL ═══ -->
+  <div id="panel-krl" style="display:none;margin-top:14px" class="fu">
+    <div class="krl-card rv">
+      <div class="krl-header">
+        <div class="krl-icon">🚆</div>
+        <div>
+          <div class="krl-title">Jadwal KRL</div>
+          <div class="krl-sub">Commuter Line Jabodetabek</div>
+        </div>
+        <div style="margin-left:auto">
+          <div id="krl-refresh-btn" onclick="fetchKRL()" style="cursor:pointer;font-size:.62rem;color:var(--krl);background:var(--krl-bg);border:1px solid var(--krl-br);padding:4px 10px;border-radius:8px;font-weight:600">↻ Refresh</div>
+        </div>
+      </div>
 
-  <!-- Empty -->
-  <div id="empty" class="hidden text-center py-20" style="animation:fadeIn .4s ease">
-    <div style="font-size:1.6rem;opacity:.2;font-family:'Instrument Serif',serif">◻</div>
-    <p style="font-size:.78rem;color:var(--dim);margin-top:10px;font-weight:500">Tidak ada jadwal</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div>
+          <p style="font-size:.6rem;color:var(--dim);margin-bottom:5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">Stasiun Asal</p>
+          <select class="krl-select" id="krl-from" onchange="syncKRL()">
+            <option value="">Pilih stasiun…</option>
+          </select>
+        </div>
+        <div>
+          <p style="font-size:.6rem;color:var(--dim);margin-bottom:5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">Tujuan</p>
+          <select class="krl-select" id="krl-to">
+            <option value="">Semua tujuan</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="time-row">
+        <input type="time" class="time-input" id="krl-from-time" value="05:00"/>
+        <input type="time" class="time-input" id="krl-to-time" value="23:59"/>
+        <button class="krl-btn" onclick="fetchKRL()">Cek Jadwal</button>
+      </div>
+
+      <div id="krl-results" style="margin-top:14px">
+        <div class="krl-empty">Pilih stasiun lalu tekan Cek Jadwal</div>
+      </div>
+    </div>
   </div>
 
-  <p class="mt-12 text-center" style="font-size:.6rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase">Kelas B · Auto-update tiap menit</p>
+  <!-- ═══ PANEL AI ═══ -->
+  <div id="panel-ai" style="display:none;margin-top:14px" class="fu">
+    <div class="ai-panel rv">
+      <div class="ai-header">
+        <div class="ai-icon">✦</div>
+        <div>
+          <div class="ai-title">AI Assistant</div>
+          <div class="ai-model">claude-sonnet-4-20250514</div>
+        </div>
+        <div style="margin-left:auto">
+          <button onclick="clearAI()" style="font-size:.62rem;color:var(--dim);background:transparent;border:1px solid var(--border);padding:4px 10px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif">Hapus</button>
+        </div>
+      </div>
+      <div class="ai-messages" id="ai-messages">
+        <div class="ai-msg bot">
+          <div class="ai-avatar">✦</div>
+          <div class="ai-bubble">Halo! Saya AI Assistant terintegrasi. Tanya apa saja — soal kuliah, jadwal, ngoding, atau hal lainnya ✨</div>
+        </div>
+      </div>
+      <div class="ai-quick" id="ai-quick">
+        <button class="ai-qbtn" onclick="quickAsk(this)">Jelaskan Numerical Method</button>
+        <button class="ai-qbtn" onclick="quickAsk(this)">Contoh soal Data Structures</button>
+        <button class="ai-qbtn" onclick="quickAsk(this)">Tips belajar OS</button>
+        <button class="ai-qbtn" onclick="quickAsk(this)">Apa itu Back-End?</button>
+      </div>
+      <div class="ai-input-row">
+        <textarea class="ai-input" id="ai-input" placeholder="Tanya sesuatu…" rows="1" onkeydown="aiKeydown(event)" oninput="autoResize(this)"></textarea>
+        <button class="ai-send" onclick="sendAI()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <p style="text-align:center;margin-top:40px;font-size:.58rem;color:var(--dim);letter-spacing:.12em;text-transform:uppercase">Kelas B · Auto-update tiap menit</p>
+
 </div>
 
 <script>
+/* ══════════════════════════════════════════
+   DATA JADWAL KULIAH
+══════════════════════════════════════════ */
 const S=[
-  {id:'1',  kode:'TK13030',nama:'Numerical Method',               sks:4,dosen:'Dyah Erny Herwindiati, Prof., Ir., M.Si, Dr.',email:'dyahh@fti.untar.ac.id',  hari:'selasa',mulai:'15:30',selesai:'17:10',ruang:'R0901',lantai:9,teams:'tsdg6uj'},
-  {id:'2',  kode:'TK13030',nama:'Numerical Method',               sks:4,dosen:'Janson Hendryli, S.Kom. M.Kom.',               email:'jansonh@fti.untar.ac.id',hari:'selasa',mulai:'13:30',selesai:'15:10',ruang:'R0901',lantai:9,teams:'tsdg6uj'},
-  {id:'3',  kode:'TK13034',nama:'Operating Systems',              sks:2,dosen:'Rifky Kurniawan, S.Kom',                       email:'rifkyk@fti.untar.ac.id', hari:'kamis', mulai:'09:30',selesai:'11:10',ruang:'R0902',lantai:9,teams:'cyvsxoy'},
-  {id:'4a', kode:'TK13038',nama:'Algebra & Discrete Mathematics', sks:4,dosen:'Lely Hiryanto, ST., M.Sc., Ph.D.',            email:'lelyh@fti.untar.ac.id',  hari:'selasa',mulai:'07:30',selesai:'09:10',ruang:'R0701',lantai:7,teams:'37f57gw'},
-  {id:'4b', kode:'TK13038',nama:'Algebra & Discrete Mathematics', sks:4,dosen:'Lely Hiryanto, ST., M.Sc., Ph.D.',            email:'lelyh@fti.untar.ac.id',  hari:'rabu',  mulai:'15:30',selesai:'17:10',ruang:'R0804',lantai:8,teams:'37f57gw'},
-  {id:'5',  kode:'TK13039',nama:'Intro to Artificial Intelligence',sks:2,dosen:'Meirista Wulandari, S.T., M.Eng. Dr.',       email:'meiristaw@ft.untar.ac.id',hari:'jumat', mulai:'13:30',selesai:'15:10',ruang:'R0701',lantai:7,teams:null},
-  {id:'6a', kode:'TK23007',nama:'Data Structures',                sks:4,dosen:'Jeanny Pragantha, Ir., M.Eng',                email:'jeannyp@fti.untar.ac.id', hari:'senin', mulai:'07:30',selesai:'09:10',ruang:'R0901',lantai:9,teams:'wd61tgy'},
-  {id:'6b', kode:'TK23007',nama:'Data Structures',                sks:4,dosen:'Jeanny Pragantha, Ir., M.Eng',                email:'jeannyp@fti.untar.ac.id', hari:'senin', mulai:'09:30',selesai:'11:10',ruang:'R0901',lantai:9,teams:'wd61tgy'},
-  {id:'7a', kode:'TK23022',nama:'Back-End Programming',           sks:4,dosen:'Janson Hendryli, S.Kom. M.Kom.',              email:'jansonh@fti.untar.ac.id', hari:'senin', mulai:'15:30',selesai:'17:10',ruang:'R0901',lantai:9,teams:'wkr6t8j'},
-  {id:'7b', kode:'TK23022',nama:'Back-End Programming',           sks:4,dosen:'Janson Hendryli, S.Kom. M.Kom.',              email:'jansonh@fti.untar.ac.id', hari:'rabu',  mulai:'11:30',selesai:'13:10',ruang:'R0902',lantai:9,teams:'wkr6t8j'},
+  {id:'1',  kode:'TK13030',nama:'Numerical Method',                sks:4,dosen:'Dyah Erny Herwindiati, Prof., Ir., M.Si, Dr.',  email:'dyahh@fti.untar.ac.id',  hari:'selasa',mulai:'15:30',selesai:'17:10',ruang:'R0901',lantai:9, teams:'tsdg6uj'},
+  {id:'2',  kode:'TK13030',nama:'Numerical Method',                sks:4,dosen:'Janson Hendryli, S.Kom. M.Kom.',                 email:'jansonh@fti.untar.ac.id',hari:'selasa',mulai:'13:30',selesai:'15:10',ruang:'R0901',lantai:9, teams:'tsdg6uj'},
+  {id:'3',  kode:'TK13034',nama:'Operating Systems',               sks:2,dosen:'Rifky Kurniawan, S.Kom',                         email:'rifkyk@fti.untar.ac.id', hari:'kamis', mulai:'09:30',selesai:'11:10',ruang:'R0902',lantai:9, teams:'cyvsxoy'},
+  {id:'4a', kode:'TK13038',nama:'Algebra & Discrete Mathematics',  sks:4,dosen:'Lely Hiryanto, ST., M.Sc., Ph.D.',               email:'lelyh@fti.untar.ac.id',  hari:'selasa',mulai:'07:30',selesai:'09:10',ruang:'R0701',lantai:7, teams:'37f57gw'},
+  {id:'4b', kode:'TK13038',nama:'Algebra & Discrete Mathematics',  sks:4,dosen:'Lely Hiryanto, ST., M.Sc., Ph.D.',               email:'lelyh@fti.untar.ac.id',  hari:'rabu',  mulai:'15:30',selesai:'17:10',ruang:'R0804',lantai:8, teams:'37f57gw'},
+  {id:'5',  kode:'TK13039',nama:'Intro to Artificial Intelligence',sks:2,dosen:'Meirista Wulandari, S.T., M.Eng. Dr.',            email:'meiristaw@ft.untar.ac.id',hari:'jumat', mulai:'13:30',selesai:'15:10',ruang:'R0701',lantai:7, teams:null},
+  {id:'6a', kode:'TK23007',nama:'Data Structures',                 sks:4,dosen:'Jeanny Pragantha, Ir., M.Eng',                   email:'jeannyp@fti.untar.ac.id', hari:'senin', mulai:'07:30',selesai:'09:10',ruang:'R0901',lantai:9, teams:'wd61tgy'},
+  {id:'6b', kode:'TK23007',nama:'Data Structures',                 sks:4,dosen:'Jeanny Pragantha, Ir., M.Eng',                   email:'jeannyp@fti.untar.ac.id', hari:'senin', mulai:'09:30',selesai:'11:10',ruang:'R0901',lantai:9, teams:'wd61tgy'},
+  {id:'7a', kode:'TK23022',nama:'Back-End Programming',            sks:4,dosen:'Janson Hendryli, S.Kom. M.Kom.',                  email:'jansonh@fti.untar.ac.id', hari:'senin', mulai:'15:30',selesai:'17:10',ruang:'R0901',lantai:9, teams:'wkr6t8j'},
+  {id:'7b', kode:'TK23022',nama:'Back-End Programming',            sks:4,dosen:'Janson Hendryli, S.Kom. M.Kom.',                  email:'jansonh@fti.untar.ac.id', hari:'rabu',  mulai:'11:30',selesai:'13:10',ruang:'R0902',lantai:9, teams:'wkr6t8j'},
 ];
 
 const DIDX=['minggu','senin','selasa','rabu','kamis','jumat','sabtu'];
@@ -287,7 +682,7 @@ function statusOf(item){
   return{t:'done'};
 }
 
-// Clock
+/* ── Clock ── */
 function tick(){
   const n=new Date();
   document.getElementById('clk').textContent=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
@@ -296,8 +691,8 @@ function tick(){
   document.getElementById('hdate').textContent=`${n.getDate()} ${MON[n.getMonth()]} ${n.getFullYear()}`;
 }
 
-// Build card
-function card(item,idx){
+/* ── Build card ── */
+function buildCard(item,idx){
   const si=statusOf(item);
   let cls='card rv';
   if(si.t==='live')cls+=' live';
@@ -311,11 +706,11 @@ function card(item,idx){
   let prog='';
   if(si.t==='live'){
     prog=`
-    <div class="pt mt-3"><div class="pf" id="pf-${item.id}" style="width:${si.prog.toFixed(1)}%"></div></div>
-    <div class="flex justify-between mt-1.5">
-      <span style="font-size:.62rem;color:var(--dim)">${item.mulai}</span>
-      <span style="font-size:.62rem;color:var(--live);font-weight:500">${fmtC(si.rem)} tersisa</span>
-      <span style="font-size:.62rem;color:var(--dim)">${item.selesai}</span>
+    <div class="pt" style="margin-top:12px"><div class="pf" id="pf-${item.id}" style="width:${si.prog.toFixed(1)}%"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:5px">
+      <span style="font-size:.6rem;color:var(--dim);font-family:'JetBrains Mono',monospace">${item.mulai}</span>
+      <span style="font-size:.62rem;color:var(--live);font-weight:600">${fmtC(si.rem)} tersisa</span>
+      <span style="font-size:.6rem;color:var(--dim);font-family:'JetBrains Mono',monospace">${item.selesai}</span>
     </div>`;
   }
 
@@ -326,20 +721,20 @@ function card(item,idx){
       </a>`
     :`<span style="font-size:.62rem;color:var(--dim)">—</span>`;
 
-  return`<div class="${cls}" style="padding:17px 15px 15px;transition-delay:${idx*.055}s" data-hari="${item.hari}">
-    <div class="flex items-center justify-between gap-2 flex-wrap">
-      <div class="flex items-center gap-2">
+  return`<div class="${cls}" style="padding:16px 15px 14px;transition-delay:${idx*.05}s" data-hari="${item.hari}">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:7px">
         <span class="daypill">${item.hari.slice(0,3).toUpperCase()}</span>
-        <span style="font-size:.6rem;color:var(--dim);font-weight:500">${item.kode}</span>
-        <span style="font-size:.6rem;color:var(--dim);font-weight:500">${item.sks} sks</span>
+        <span style="font-size:.58rem;color:var(--dim);font-weight:500;font-family:'JetBrains Mono',monospace">${item.kode}</span>
+        <span style="font-size:.58rem;color:var(--dim)">${item.sks} sks</span>
       </div>
       ${chip}
     </div>
 
-    <h3 style="font-family:'Instrument Serif',serif;font-size:1.12rem;line-height:1.25;margin-top:10px;letter-spacing:-.01em">${item.nama}</h3>
-    <p style="font-size:.73rem;color:var(--sub);margin-top:3px;line-height:1.4">${item.dosen}</p>
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.15rem;line-height:1.25;margin-top:10px;letter-spacing:-.01em">${item.nama}</h3>
+    <p style="font-size:.72rem;color:var(--sub);margin-top:3px;line-height:1.45">${item.dosen}</p>
 
-    <div class="flex flex-wrap gap-2 mt-3">
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
       <span class="mb">
         <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
         ${item.mulai} – ${item.selesai}
@@ -356,14 +751,14 @@ function card(item,idx){
 
     ${prog}
 
-    <div class="flex items-center justify-between mt-4 pt-3" style="border-top:1px solid var(--border)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:11px;border-top:1px solid var(--border)">
       ${teams}
-      <a href="mailto:${item.email}" style="font-size:.62rem;color:var(--dim);text-decoration:none">${item.email}</a>
+      <a href="mailto:${item.email}" style="font-size:.6rem;color:var(--dim);text-decoration:none">${item.email}</a>
     </div>
   </div>`;
 }
 
-// State
+/* ── State & render ── */
 let filter='today', query='', notified=new Set();
 
 function getFiltered(){
@@ -396,28 +791,26 @@ function render(){
     DORD.forEach(day=>{
       if(!g[day])return;
       const isT=day===today;
-      html+=`<div class="seclabel mt-6 mb-3 rv" style="transition-delay:${gi*.04}s">${DFULL[DORD.indexOf(day)+1]||day}${isT?' <span style="color:rgba(160,220,110,.65);font-size:.5rem;margin-left:4px">● hari ini</span>':''}</div>`;
-      g[day].forEach(item=>{html+=card(item,gi);gi++;});
+      html+=`<div class="seclabel rv" style="margin-top:20px;margin-bottom:8px;transition-delay:${gi*.04}s">${DFULL[DORD.indexOf(day)+1]||day}${isT?'<span style="color:var(--teal);font-size:.5rem;margin-left:6px">● hari ini</span>':''}</div>`;
+      g[day].forEach(item=>{html+=buildCard(item,gi);gi++;});
     });
     con.innerHTML=html;
   } else {
-    // today: show "Tidak ada" if weekend
     if(filter==='today'&&['sabtu','minggu'].includes(today)){
-      con.innerHTML='';
-      emp.classList.remove('hidden');
-      emp.querySelector('p').textContent='Tidak ada kuliah hari ini ☁';
+      con.innerHTML='';emp.classList.remove('hidden');
+      emp.querySelector('.empty-txt').textContent='Tidak ada kuliah hari ini ☁';
       return;
     }
-    let html='';data.forEach((item,i)=>{html+=card(item,i);});
+    let html='';data.forEach((item,i)=>{html+=buildCard(item,i);});
     con.innerHTML=html;
   }
 
   requestAnimationFrame(()=>{
-    document.querySelectorAll('.rv').forEach((el,i)=>setTimeout(()=>el.classList.add('in'),i*50));
+    document.querySelectorAll('.rv').forEach((el,i)=>setTimeout(()=>el.classList.add('in'),i*45));
   });
 }
 
-// Live progress
+/* ── Live progress ── */
 function updProg(){
   const now=nowMin(),today=todayK();
   S.forEach(item=>{
@@ -428,7 +821,7 @@ function updProg(){
   });
 }
 
-// Toast
+/* ── Toast ── */
 function toast(icon,title,body){
   const w=document.getElementById('notifs');
   const el=document.createElement('div');
@@ -440,22 +833,23 @@ function toast(icon,title,body){
       <div class="tbar"></div>
     </div>`;
   w.prepend(el);
-  setTimeout(()=>el.remove(),5400);
+  setTimeout(()=>el.remove(),5600);
 }
 
+/* ── Alerts ── */
 function checkAlerts(){
   const now=nowMin(),today=todayK();
   S.forEach(item=>{
     if(item.hari!==today)return;
     const s=toMin(item.mulai),diff=s-now;
     const k15=`15-${item.id}`,k5=`5-${item.id}`,k0=`0-${item.id}`;
-    if(diff===15&&!notified.has(k15)){notified.add(k15);toast('⏰',item.nama,`Mulai 15 menit lagi · ${item.ruang} Lantai ${item.lantai}`);}
-    if(diff===5 &&!notified.has(k5)) {notified.add(k5); toast('🔔',item.nama,`Segera mulai · ${item.mulai} di ${item.ruang}`);}
-    if(diff===0 &&!notified.has(k0)) {notified.add(k0); toast('▶',`Kelas dimulai`,`${item.nama} · ${item.ruang} Lantai ${item.lantai}`);}
+    if(diff===15&&!notified.has(k15)){notified.add(k15);toast('⏰',item.nama,`Mulai 15 menit lagi · ${item.ruang} Lt.${item.lantai}`);}
+    if(diff===5 &&!notified.has(k5)){notified.add(k5);toast('🔔',item.nama,`Segera mulai · ${item.mulai} di ${item.ruang}`);}
+    if(diff===0 &&!notified.has(k0)){notified.add(k0);toast('▶','Kelas dimulai',`${item.nama} · ${item.ruang} Lt.${item.lantai}`);}
   });
 }
 
-// Tabs
+/* ── Tabs ── */
 document.getElementById('tabs').addEventListener('click',e=>{
   const btn=e.target.closest('.tab');
   if(!btn)return;
@@ -464,33 +858,330 @@ document.getElementById('tabs').addEventListener('click',e=>{
   filter=btn.dataset.d;
   render();
 });
-function setDefaultTab(){
-  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
-  document.querySelector('.tab[data-d="today"]').classList.add('on');
-}
+document.querySelector('.tab[data-d="today"]').classList.add('on');
 
 document.getElementById('q').addEventListener('input',e=>{query=e.target.value.trim();render();});
 
+/* ── Scroll bar ── */
 window.addEventListener('scroll',()=>{
-  const docH=document.documentElement.scrollHeight-window.innerHeight;
-  document.getElementById('spb').style.width=(docH>0?window.scrollY/docH*100:0)+'%';
+  const d=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('spb').style.width=(d>0?window.scrollY/d*100:0)+'%';
 },{passive:true});
 
-// Init
-setDefaultTab();
+/* ══════════════════════════════════════════
+   MODE SWITCHER
+══════════════════════════════════════════ */
+function switchMode(btn){
+  document.querySelectorAll('.msbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const mode=btn.dataset.mode;
+  document.getElementById('panel-kuliah').style.display=mode==='kuliah'?'block':'none';
+  document.getElementById('panel-krl').style.display=mode==='krl'?'block':'none';
+  document.getElementById('panel-ai').style.display=mode==='ai'?'block':'none';
+  // trigger reveal
+  setTimeout(()=>{
+    document.querySelectorAll('.rv').forEach(el=>el.classList.add('in'));
+  },50);
+}
+
+/* ══════════════════════════════════════════
+   KRL API
+══════════════════════════════════════════ */
+const KRL_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiYmE0Yzc4MzE4ODNjYTI0N2YzMTBkMTJhYzc3ZjE5ZTdjMTVkNjgxOTk2ODM0MDc0MGM3MzliYmRjNGQ3YTI5MzczYzMyNWM2NDFiZjgxYzciLCJpYXQiOjE3NTQ0NTkxMjYsIm5iZiI6MTc1NDQ1OTEyNiwiZXhwIjoxNzg1OTk1MTI2LCJzdWIiOiI1Iiwic2NvcGVzIjpbXX0.zPA0IDAN3NycMKa6DaOdRmkcFz1oUTX1dkxEp3MLBlhibTQI0L0WB9mY-pUlQW5vQj8ktOdo-rRvrjxiXaHFqLQM6ebONbqTg8V0AjBXwrkBjLZDCE4dop9iZyDXcG2b9XTLCgPgpOBbduW_Dy0-bIkJOOIgIzl9mEEUVQf3T6G_zA796SGJ6rtLqfBK-sMnhOV4eZSqQIXIrxPyCJ8SA893p-29PFxfQfcbXW_6cYBFhDzyiilhJ6xQd6znN2eWOL4MPAxYeS2ZGnaZ7ijUN91MAyPnV0dQU7loVtS1jt2HlM5oMSsE2Zoz6FP31GvG6f7o_MWogEp0ZMOus50bVly3II8Rjjc4IGgswbw0h-RS0Ipo3f2QmXp4GfhRNUoTyqq-7oiCIDPUJcdg39lSIy9Fz7-ECNfbjEiH60V3GyftuiFGrayMoE7XeWaC9wQZo3fLHhI1aPgbXXsP-rqWLFf2km4zdG5Y5CYpUNb_Z11VOU6aaFCdRtoC6e7VcxHxLwCBT22wluNpbfFtEQSYDQE1JlegijvFmnRHTM88n-zp7sWhuCWVX6oE0ULdy51SR4iOqpYOA4B1ZymmYrQz1kBxSA_52lnTBlU9gfWkUiFX8GLSh7wQ8a4dVMYoJj6t1VCJt9-d30jn4S3tXsim_3wpp71RE9SSazV35j8o7do';
+
+// Station list dari JSON yang disediakan - hanya Jabodetabek
+const KRL_STATIONS = [
+  {id:'AC',name:'Ancol'},{id:'AK',name:'Angke'},{id:'BJD',name:'Bojonggede'},{id:'BKS',name:'Bekasi'},
+  {id:'BKST',name:'Bekasi Timur'},{id:'BOI',name:'Bojong Indah'},{id:'BOO',name:'Bogor'},{id:'BPR',name:'Batu Ceper'},
+  {id:'BUA',name:'Buaran'},{id:'CBN',name:'Cibinong'},{id:'CC',name:'Cicayur'},{id:'CIT',name:'Cibitung'},
+  {id:'CJT',name:'Cilejit'},{id:'CKI',name:'Cikini'},{id:'CKR',name:'Cikarang'},{id:'CLT',name:'Cilebut'},
+  {id:'CSK',name:'Cisauk'},{id:'CTA',name:'Citayam'},{id:'CUK',name:'Cakung'},{id:'CW',name:'Cawang'},
+  {id:'DAR',name:'Daru'},{id:'DP',name:'Depok'},{id:'DPB',name:'Depok Baru'},{id:'DRN',name:'Duren Kalibata'},
+  {id:'DU',name:'Duri'},{id:'GDD',name:'Gondangdia'},{id:'GGL',name:'Grogol'},{id:'GST',name:'Gang Sentiong'},
+  {id:'JAKK',name:'Jakarta Kota'},{id:'JTK',name:'Jatake'},{id:'JAY',name:'Jayakarta'},{id:'JMU',name:'Jurang Mangu'},
+  {id:'JNG',name:'Jatinegara'},{id:'JUA',name:'Juanda'},{id:'KAT',name:'Karet'},{id:'KBY',name:'Kebayoran'},
+  {id:'KDS',name:'Kalideres'},{id:'KLD',name:'Klender'},{id:'KLDB',name:'Klender Baru'},{id:'KMO',name:'Kemayoran'},
+  {id:'KMT',name:'Kramat'},{id:'KPB',name:'Kampung Bandan'},{id:'KRI',name:'Kranji'},{id:'LNA',name:'Lenteng Agung'},
+  {id:'MGB',name:'Mangga Besar'},{id:'MJ',name:'Maja'},{id:'MTR',name:'Matraman'},{id:'MRI',name:'Manggarai'},
+  {id:'NMO',name:'Nambo'},{id:'PDJ',name:'Pondok Ranji'},{id:'PI',name:'Poris'},{id:'PLM',name:'Palmerah'},
+  {id:'POC',name:'Pondok Cina'},{id:'PRP',name:'Parung Panjang'},{id:'PSE',name:'Pasar Senen'},
+  {id:'PSG',name:'Pesing'},{id:'PSM',name:'Pasar Minggu'},{id:'PSMB',name:'Pasar Minggu Baru'},
+  {id:'RJW',name:'Rajawali'},{id:'RU',name:'Rawa Buntu'},{id:'RW',name:'Rawa Buaya'},{id:'SDM',name:'Sudimara'},
+  {id:'SRP',name:'Serpong'},{id:'SUDB',name:'Sudirman Baru (BNI City)'},{id:'SUD',name:'Sudirman'},
+  {id:'SW',name:'Sawah Besar'},{id:'TB',name:'Tambun'},{id:'TEB',name:'Tebet'},{id:'TEJ',name:'Tenjo'},
+  {id:'TGS',name:'Tigaraksa'},{id:'THB',name:'Tanah Abang'},{id:'TKO',name:'Taman Kota'},
+  {id:'TNG',name:'Tangerang'},{id:'TNT',name:'Tanjung Barat'},{id:'TPK',name:'Tanjung Priok'},
+  {id:'UI',name:'Univ. Indonesia'},{id:'UP',name:'Univ. Pancasila'},{id:'RK',name:'Rangkasbitung'},
+  {id:'CLG',name:'Cilegon'},{id:'MER',name:'Merak'},{id:'SG',name:'Serang'},{id:'TLM',name:'Metland Telagamurni'},
+  {id:'PDRG',name:'Pondok Rajeg'},{id:'CKY',name:'Cikoya'},{id:'CTR',name:'Citeras'},
+  {id:'JBU',name:'Jambu Baru'},{id:'CT',name:'Catang'},{id:'CKL',name:'Cikeusal'},
+  {id:'WLT',name:'Walantaka'},{id:'KRA',name:'Karangantu'},{id:'TOJB',name:'Tonjong Baru'},
+  {id:'KEN',name:'Krenceng'},{id:'THI',name:'Tanah Tinggi'},{id:'POK',name:'Pondok Jati'},
+];
+
+KRL_STATIONS.sort((a,b)=>a.name.localeCompare(b.name));
+
+// Populate station dropdowns
+function populateStations(){
+  const from=document.getElementById('krl-from');
+  const to=document.getElementById('krl-to');
+  KRL_STATIONS.forEach(s=>{
+    const opt=`<option value="${s.id}">${s.name}</option>`;
+    from.insertAdjacentHTML('beforeend',opt);
+    to.insertAdjacentHTML('beforeend',opt);
+  });
+}
+
+function syncKRL(){
+  // nothing for now, just refresh
+}
+
+// Line color mapping
+function getLineClass(trainId){
+  if(!trainId)return'';
+  const id=String(trainId).toUpperCase();
+  if(id.includes('RED')||id.includes('1'))return'line-1';
+  if(id.includes('YEL')||id.includes('2')||id.includes('BOG'))return'line-2';
+  if(id.includes('GRN')||id.includes('5'))return'line-5';
+  if(id.includes('BLU')||id.includes('6')||id.includes('SKY'))return'line-6';
+  return'line-7';
+}
+
+async function fetchKRL(){
+  const fromSta=document.getElementById('krl-from').value;
+  const timefrom=document.getElementById('krl-from-time').value||'05:00';
+  const timeto=document.getElementById('krl-to-time').value||'23:59';
+  const results=document.getElementById('krl-results');
+
+  if(!fromSta){
+    toast('⚠️','Pilih Stasiun','Pilih stasiun keberangkatan terlebih dahulu');
+    return;
+  }
+
+  results.innerHTML=`<div class="krl-loading"><div class="loader-ring"></div><p style="font-size:.7rem;color:var(--dim);margin-top:10px">Mengambil jadwal…</p></div>`;
+
+  try{
+    const url=`https://api-partner.krl.co.id/krl-webs/v1/schedules?stationid=${fromSta}&timefrom=${timefrom}&timeto=${timeto}`;
+    const resp=await fetch(url,{
+      headers:{
+        'Authorization':`Bearer ${KRL_TOKEN}`,
+        'Accept':'application/json',
+        'Origin':'https://kci.id',
+        'Referer':'https://kci.id/',
+        'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      }
+    });
+
+    if(!resp.ok)throw new Error(`HTTP ${resp.status}`);
+    const json=await resp.json();
+    const data=json.data||[];
+
+    if(!data.length){
+      results.innerHTML=`<div class="krl-empty">Tidak ada jadwal untuk rentang waktu ini</div>`;
+      return;
+    }
+
+    // Filter by dest if selected
+    const toSta=document.getElementById('krl-to').value;
+    let filtered=data;
+    if(toSta){
+      filtered=data.filter(d=>{
+        const dest=(d.dest||d.dest_station_id||'').toUpperCase();
+        return dest.includes(toSta.toUpperCase());
+      });
+    }
+
+    if(!filtered.length){
+      results.innerHTML=`<div class="krl-empty">Tidak ada kereta ke stasiun tujuan ini</div>`;
+      return;
+    }
+
+    const html=filtered.slice(0,30).map(d=>{
+      const timeStr=d.time_est||d.start_time||'--:--';
+      const dest=d.dest||d.dest_station||d.ka_name||'—';
+      const trainId=d.train_id||d.ka_id||'';
+      const stops=d.stops_at||'';
+      const lineClass=getLineClass(trainId);
+      return`<div class="krl-row">
+        <div class="krl-time">${timeStr}</div>
+        ${trainId?`<span class="krl-line ${lineClass}">${trainId}</span>`:''}
+        <div class="krl-dest">${dest}</div>
+        ${stops?`<div class="krl-stops">${stops} stops</div>`:''}
+      </div>`;
+    }).join('');
+
+    const fromName=KRL_STATIONS.find(s=>s.id===fromSta)?.name||fromSta;
+    results.innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <p style="font-size:.62rem;color:var(--krl);font-weight:600;letter-spacing:.06em;text-transform:uppercase">📍 ${fromName} · ${filtered.length} kereta</p>
+        <p style="font-size:.6rem;color:var(--dim)">${timefrom} – ${timeto}</p>
+      </div>
+      ${html}`;
+    toast('🚆','Jadwal KRL',`${filtered.length} kereta ditemukan dari ${fromName}`);
+
+  }catch(err){
+    // CORS fallback — show demo data
+    results.innerHTML=`
+      <div class="alert-bar" style="margin-bottom:12px">
+        ⚠️ <span>API KRL tidak dapat diakses langsung dari browser (CORS). Gunakan proxy atau buka dari server.</span>
+      </div>
+      <div class="krl-empty" style="padding:12px 0">
+        <p style="font-size:.7rem;color:var(--dim)">Error: ${err.message}</p>
+        <p style="font-size:.65rem;color:var(--dim);margin-top:6px">Tip: API KRL memerlukan server-side proxy karena CORS policy.</p>
+      </div>`;
+    console.warn('KRL API error:',err);
+  }
+}
+
+/* ══════════════════════════════════════════
+   AI CHAT — Anthropic API
+══════════════════════════════════════════ */
+let aiMessages=[];
+let aiTyping=false;
+
+function scrollAI(){
+  const m=document.getElementById('ai-messages');
+  m.scrollTop=m.scrollHeight;
+}
+
+function addAIMsg(role,text){
+  const container=document.getElementById('ai-messages');
+  const isUser=role==='user';
+  const div=document.createElement('div');
+  div.className=`ai-msg ${isUser?'user':'bot'}`;
+  div.innerHTML=`
+    <div class="ai-avatar">${isUser?'你':'✦'}</div>
+    <div class="ai-bubble">${text.replace(/\n/g,'<br>')}</div>`;
+  container.appendChild(div);
+  scrollAI();
+}
+
+function showTyping(){
+  const container=document.getElementById('ai-messages');
+  const div=document.createElement('div');
+  div.className='ai-msg bot';
+  div.id='ai-typing-indicator';
+  div.innerHTML=`<div class="ai-avatar">✦</div><div class="ai-bubble" style="padding:0"><div class="ai-typing"><span></span><span></span><span></span></div></div>`;
+  container.appendChild(div);
+  scrollAI();
+}
+
+function hideTyping(){
+  const el=document.getElementById('ai-typing-indicator');
+  if(el)el.remove();
+}
+
+function quickAsk(btn){
+  document.getElementById('ai-input').value=btn.textContent;
+  sendAI();
+}
+
+function aiKeydown(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendAI();}
+}
+
+function autoResize(el){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,100)+'px';
+}
+
+function clearAI(){
+  aiMessages=[];
+  const m=document.getElementById('ai-messages');
+  m.innerHTML=`<div class="ai-msg bot"><div class="ai-avatar">✦</div><div class="ai-bubble">Chat dibersihkan. Ada yang bisa saya bantu? ✨</div></div>`;
+}
+
+async function sendAI(){
+  if(aiTyping)return;
+  const input=document.getElementById('ai-input');
+  const text=input.value.trim();
+  if(!text)return;
+
+  input.value='';
+  input.style.height='auto';
+
+  // Hide quick buttons after first use
+  document.getElementById('ai-quick').style.display='none';
+
+  addAIMsg('user',text);
+  aiMessages.push({role:'user',content:text});
+  aiTyping=true;
+  showTyping();
+
+  try{
+    const jadwalCtx=S.map(s=>`${s.nama} (${s.kode}) - ${s.hari} ${s.mulai}-${s.selesai} di ${s.ruang}, Dosen: ${s.dosen}`).join('\n');
+
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`Kamu adalah asisten jadwal kuliah untuk mahasiswa FTI Untar Kelas B semester genap 2025. Bersikap ramah, singkat, dan helpful. Bahasa Indonesia.
+
+Jadwal kuliah mahasiswa:
+${jadwalCtx}
+
+Hari ini: ${DFULL[new Date().getDay()]}, ${new Date().toLocaleDateString('id-ID')}, pukul ${String(new Date().getHours()).padStart(2,'0')}:${String(new Date().getMinutes()).padStart(2,'0')}`,
+        messages:aiMessages
+      })
+    });
+
+    const data=await resp.json();
+    hideTyping();
+
+    if(data.content&&data.content[0]){
+      const reply=data.content[0].text;
+      addAIMsg('bot',reply);
+      aiMessages.push({role:'assistant',content:reply});
+    } else if(data.error){
+      addAIMsg('bot',`Error: ${data.error.message}`);
+    }
+  }catch(err){
+    hideTyping();
+    addAIMsg('bot',`Maaf, terjadi kesalahan: ${err.message}`);
+  }
+  aiTyping=false;
+}
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+// Populate KRL stations
+populateStations();
+// Set default KRL (Tangerang as example)
+document.getElementById('krl-from').value='TNG';
+
+// Now init time
+const nowH=new Date().getHours();
+document.getElementById('krl-from-time').value=`${String(nowH).padStart(2,'0')}:00`;
+document.getElementById('krl-to-time').value=`${String(Math.min(nowH+4,23)).padStart(2,'0')}:00`;
+
+// Kuliah render
 render();
 tick();
 setInterval(tick,1000);
 setInterval(()=>{checkAlerts();updProg();},60000);
-setInterval(()=>{render();},60000);
+setInterval(render,60000);
 
-// Welcome
+// Loader dismiss
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.getElementById('loader').classList.add('hidden');
+    // Reveal stat cards
+    setTimeout(()=>{
+      document.querySelectorAll('.rv').forEach((el,i)=>setTimeout(()=>el.classList.add('in'),i*45+100));
+    },200);
+  },1800);
+});
+
+// Welcome toast
 setTimeout(()=>{
   const today=todayK();
   const tc=S.filter(s=>s.hari===today);
   if(tc.length)toast('◈','Jadwal hari ini',`${tc.length} sesi kuliah · ${DFULL[new Date().getDay()]}`);
-  else toast('◻','Bebas hari ini','Tidak ada jadwal — selamat istirahat');
-},900);
+  else toast('◻','Bebas hari ini','Tidak ada jadwal — selamat istirahat ✨');
+},2200);
 </script>
 </body>
 </html>
